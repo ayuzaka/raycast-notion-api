@@ -13,5 +13,6 @@
     "forceConsistentCasingInFileNames": true,
     "jsx": "react-jsx",
     "resolveJsonModule": true
-  }
+  },
+  "extends": "@tsconfig/strictest/tsconfig.json"
 }
