@@ -1,8 +1,8 @@
 {
   "$schema": "https://www.raycast.com/schemas/extension.json",
   "name": "raycast-notion-api",
-  "title": "raycast-notion-api",
-  "description": "",
+  "title": "Raycast-notion-api",
+  "description": "integration with Notion API",
   "icon": "command-icon.png",
   "author": "ayuzaka",
   "license": "MIT",
@@ -10,13 +10,13 @@
     {
       "name": "bookmark",
       "title": "Bookmark",
-      "description": "",
+      "description": "You can search and open bookmark from Notion",
       "mode": "view"
     },
     {
       "name": "clip",
       "title": "Clip",
-      "description": "",
+      "description": "You can stock any web article into Notion",
       "mode": "view"
     }
   ],
