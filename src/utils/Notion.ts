@@ -3,6 +3,7 @@ import type {
   CreatePageParameters,
   GetPagePropertyResponse,
   PageObjectResponse,
+  QueryDatabaseParameters,
 } from "@notionhq/client/build/src/api-endpoints";
 import type { Result } from "../types";
 import { formatDate } from "./dateUtils";
@@ -61,11 +62,30 @@ export class Notion {
     );
   }
 
+  private async fetchDatabase(id: string): Promise<PageObjectResponse[]> {
+    const allResults: PageObjectResponse[] = [];
+    let next: string | null = null;
+
+    do {
+      const parameter: QueryDatabaseParameters = {
+        database_id: id,
+        sorts: [{ property: "Name", direction: "ascending" }],
+      };
+
+      if (next) {
+        parameter.start_cursor = next;
+      }
+
+      const { results, next_cursor } = await this.#client.databases.query(parameter);
+      allResults.push(...(results as PageObjectResponse[]));
+      next = next_cursor;
+    } while (next);
+
+    return allResults;
+  }
+
   async fetchTags(): Promise<readonly Tag[]> {
-    const { results } = (await this.#client.databases.query({
-      database_id: this.#tagDatabaseId,
-      sorts: [{ property: "Name", direction: "ascending" }],
-    })) as { results: PageObjectResponse[] };
+    const results = await this.fetchDatabase(this.#tagDatabaseId);
     if (!results[0]) {
       return [];
     }
@@ -172,10 +192,7 @@ export class Notion {
   }
 
   async fetchBookmarks(databaseId: string): Promise<readonly Bookmark[]> {
-    const { results } = (await this.#client.databases.query({
-      database_id: databaseId,
-      sorts: [{ property: "Tag", direction: "ascending" }],
-    })) as { results: PageObjectResponse[] };
+    const results = await this.fetchDatabase(databaseId);
     if (!results[0]) {
       return [];
     }
