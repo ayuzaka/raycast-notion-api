@@ -68,6 +68,13 @@
       "title": "Notion Article database id"
     },
     {
+      "name": "bookmarkDatabaseId",
+      "description": "Notion Bookmark database id",
+      "type": "textfield",
+      "required": true,
+      "title": "Notion Bookmark database id"
+    },
+    {
       "name": "tagDatabaseId",
       "description": "Notion Tag database id",
       "type": "textfield",
