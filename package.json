@@ -21,6 +21,7 @@
     }
   ],
   "dependencies": {
+    "@notionhq/client": "^2.2.1",
     "@raycast/api": "^1.42.1",
     "@raycast/utils": "^1.4.10",
     "domutils": "^3.0.1",
