@@ -1,5 +1,5 @@
 import { Action, ActionPanel, getPreferenceValues, List } from "@raycast/api";
-import { getFavicon, useCachedPromise } from "@raycast/utils";
+import { getFavicon } from "@raycast/utils";
 import { useBookmarkList } from "./hooks/useBookmarkList";
 import { useFetchBookmarks } from "./hooks/useFetchBookmarks";
 import { useFetchTags } from "./hooks/useFetchTags";
