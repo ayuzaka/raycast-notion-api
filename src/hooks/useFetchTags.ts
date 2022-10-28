@@ -1,11 +1,10 @@
-import { useState } from "react";
 import { Cache } from "@raycast/api";
 import { useCachedPromise } from "@raycast/utils";
 import type { Notion, Tag } from "../utils/Notion";
 
 const CACHE_KEY = "tags";
 export const useFetchTags = (notion: Notion) => {
-  const [cache] = useState(new Cache());
+  const cache = new Cache();
 
   const { data } = useCachedPromise(async () => {
     if (cache.has(CACHE_KEY)) {

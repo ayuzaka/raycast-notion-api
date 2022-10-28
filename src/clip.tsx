@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { Action, ActionPanel, Form, getPreferenceValues, showToast, Toast } from "@raycast/api";
 import { useForm } from "@raycast/utils";
 import { useFetchTags } from "./hooks/useFetchTags";
