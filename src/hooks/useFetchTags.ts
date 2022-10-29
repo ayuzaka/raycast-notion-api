@@ -1,9 +1,9 @@
 import { Cache } from "@raycast/api";
 import { useCachedPromise } from "@raycast/utils";
-import type { Notion, Tag } from "../utils/Notion";
+import type { Tag } from "../hooks/useNotion";
 
 const CACHE_KEY = "tags";
-export const useFetchTags = (notion: Notion) => {
+export const useFetchTags = (fetchTags: () => Promise<readonly Tag[]>) => {
   const cache = new Cache();
 
   const { data } = useCachedPromise(async () => {
@@ -14,7 +14,7 @@ export const useFetchTags = (notion: Notion) => {
       }
     }
 
-    const tags = await notion.fetchTags();
+    const tags = await fetchTags();
 
     cache.set(CACHE_KEY, JSON.stringify(tags));
 

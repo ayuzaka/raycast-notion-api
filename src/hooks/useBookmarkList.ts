@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from "react";
 
-import type { Bookmark } from "../utils/Notion";
 import { filterName, filterTag } from "../utils/utils";
+import type { Bookmark } from "./useNotion";
 
 export function useBookmarkList(data: readonly Bookmark[] | undefined) {
   const [searchText, setSearchText] = useState("");

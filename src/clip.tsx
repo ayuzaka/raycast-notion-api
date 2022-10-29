@@ -3,9 +3,9 @@ import { Action, ActionPanel, Form, getPreferenceValues, showToast, Toast } from
 import { useForm } from "@raycast/utils";
 import { useFetchTags } from "./hooks/useFetchTags";
 import { fetchHTML } from "./utils/fetcher";
-import { Notion } from "./utils/Notion";
 import { parseDOM } from "./utils/parser";
 import { validateURL } from "./utils/validate";
+import { useNotion } from "./hooks/useNotion";
 
 type Preference = {
   auth: string;
@@ -21,9 +21,9 @@ type FormValue = {
 
 export default function Clip() {
   const preference = getPreferenceValues<Preference>();
-  const notion = new Notion(preference.auth, preference.tagDatabaseId);
+  const { fetchTags, stockArticle } = useNotion(preference.auth, preference.tagDatabaseId);
 
-  const tags = useFetchTags(notion);
+  const tags = useFetchTags(fetchTags);
 
   const urlFieldRef = useRef<Form.TextField>(null);
   const tagFIeldRef = useRef<Form.TagPicker>(null);
@@ -38,7 +38,7 @@ export default function Clip() {
       if (res.type === "success") {
         const { origin } = new URL(url);
         const parsedDOM = parseDOM(res.data, origin);
-        const result = await notion.stockArticle(preference.articleDatabaseId, { ...parsedDOM, url, tags, published });
+        const result = await stockArticle(preference.articleDatabaseId, { ...parsedDOM, url, tags, published });
         if (result.type === "success") {
           showToast({ title: "stocked article", style: Toast.Style.Success });
 

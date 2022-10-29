@@ -1,9 +1,12 @@
 import { Cache } from "@raycast/api";
 import { useCachedPromise } from "@raycast/utils";
-import type { Bookmark, Notion } from "../utils/Notion";
+import type { Bookmark } from "./useNotion";
 
 const CACHE_KEY = "bookmarks";
-export const useFetchBookmarks = (notion: Notion, databaseId: string) => {
+export const useFetchBookmarks = (
+  fetchBookmarks: (databaseId: string) => Promise<readonly Bookmark[]>,
+  databaseId: string
+) => {
   const cache = new Cache();
 
   const response = useCachedPromise(async () => {
@@ -14,7 +17,7 @@ export const useFetchBookmarks = (notion: Notion, databaseId: string) => {
       }
     }
 
-    const bookmarks = await notion.fetchBookmarks(databaseId);
+    const bookmarks = await fetchBookmarks(databaseId);
 
     cache.set(CACHE_KEY, JSON.stringify(bookmarks));
 

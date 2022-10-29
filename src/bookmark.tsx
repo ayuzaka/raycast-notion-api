@@ -3,7 +3,8 @@ import { getFavicon } from "@raycast/utils";
 import { useBookmarkList } from "./hooks/useBookmarkList";
 import { useFetchBookmarks } from "./hooks/useFetchBookmarks";
 import { useFetchTags } from "./hooks/useFetchTags";
-import { Notion, Tag } from "./utils/Notion";
+import { useNotion } from "./hooks/useNotion";
+import type { Tag } from "./hooks/useNotion";
 
 type Preference = {
   auth: string;
@@ -31,11 +32,11 @@ const TagDropdown = ({ tags, handleChange }: DropdownProps) => {
 
 export default function Bookmark() {
   const preference = getPreferenceValues<Preference>();
-  const notion = new Notion(preference.auth, preference.tagDatabaseId);
+  const { fetchTags, fetchBookmarks } = useNotion(preference.auth, preference.tagDatabaseId);
 
-  const tags = useFetchTags(notion);
+  const tags = useFetchTags(fetchTags);
 
-  const { data, isLoading } = useFetchBookmarks(notion, preference.bookmarkDatabaseId);
+  const { data, isLoading } = useFetchBookmarks(fetchBookmarks, preference.bookmarkDatabaseId);
   const { filteredBookmarks, setSearchText, updateSearchTag } = useBookmarkList(data);
 
   return (
