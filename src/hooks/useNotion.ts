@@ -43,7 +43,7 @@ type Property =
     }
   | {
       readonly name: "tag";
-      readonly value: string;
+      readonly value: string[];
     };
 
 export const useNotion = (auth: string, tagDatabaseId: string) => {
@@ -85,7 +85,9 @@ export const useNotion = (auth: string, tagDatabaseId: string) => {
         }
 
         if (results[0]?.type === "relation") {
-          return { name: "tag", value: results[0].relation.id };
+          const tagIds = results.map((result) => (result.type === "relation" ? result.relation.id : ""));
+
+          return { name: "tag", value: tagIds };
         }
 
         return null;
@@ -180,7 +182,7 @@ export const useNotion = (auth: string, tagDatabaseId: string) => {
             break;
 
           case "tag":
-            bookmark.tag.push(property.value);
+            bookmark.tag = property.value;
             break;
 
           default:
