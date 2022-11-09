@@ -7,6 +7,7 @@ const bookmarks = [
     name: "HTML Living Standard",
     url: "https://html.spec.whatwg.org",
     favicon: null,
+    cover: null,
     tag: ["HTML"],
   },
   {
@@ -14,6 +15,7 @@ const bookmarks = [
     name: "MDN Web Docs",
     url: "https://developer.mozilla.org/en-US/",
     favicon: null,
+    cover: null,
     tag: ["HTML", "CSS", "JavaScript"],
   },
   {
@@ -21,6 +23,7 @@ const bookmarks = [
     name: "Standard Blog",
     url: "https://standard.example",
     favicon: null,
+    cover: null,
     tag: ["web"],
   },
 ];
@@ -36,6 +39,7 @@ test("filtered by text", () => {
       name: "HTML Living Standard",
       url: "https://html.spec.whatwg.org",
       favicon: null,
+      cover: null,
       tag: ["HTML"],
     },
     {
@@ -43,6 +47,7 @@ test("filtered by text", () => {
       name: "Standard Blog",
       url: "https://standard.example",
       favicon: null,
+      cover: null,
       tag: ["web"],
     },
   ]);
@@ -59,6 +64,7 @@ test("filtered by tag", () => {
       name: "HTML Living Standard",
       url: "https://html.spec.whatwg.org",
       favicon: null,
+      cover: null,
       tag: ["HTML"],
     },
     {
@@ -66,6 +72,7 @@ test("filtered by tag", () => {
       name: "MDN Web Docs",
       url: "https://developer.mozilla.org/en-US/",
       favicon: null,
+      cover: null,
       tag: ["HTML", "CSS", "JavaScript"],
     },
   ]);
@@ -83,6 +90,7 @@ test("filtered by text and tag", () => {
       name: "Standard Blog",
       url: "https://standard.example",
       favicon: null,
+      cover: null,
       tag: ["web"],
     },
   ]);

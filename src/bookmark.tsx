@@ -44,6 +44,7 @@ export default function Bookmark() {
       isLoading={isLoading}
       onSearchTextChange={setSearchText}
       searchBarAccessory={<TagDropdown tags={tags || []} handleChange={updateSearchTag} />}
+      isShowingDetail
     >
       {filteredBookmarks.map((bookmark) => (
         <List.Item
@@ -56,6 +57,7 @@ export default function Bookmark() {
               <Action.CopyToClipboard content={bookmark.url} />
             </ActionPanel>
           }
+          detail={<List.Item.Detail markdown={`![illustration](${bookmark.cover})`} />}
         />
       ))}
     </List>

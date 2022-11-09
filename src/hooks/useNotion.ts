@@ -20,6 +20,7 @@ export type Bookmark = {
   name: string;
   url: string;
   favicon: string | null;
+  cover: string | null;
   tag: string[];
 };
 
@@ -74,6 +75,18 @@ export const useNotion = (auth: string, tagDatabaseId: string) => {
     }
 
     return icon.file.url;
+  }, []);
+
+  const getCover = useCallback((cover: PageObjectResponse["cover"]): string | null => {
+    if (!cover) {
+      return null;
+    }
+
+    if (cover.type === "external") {
+      return cover.external.url;
+    }
+
+    return cover.file.url;
   }, []);
 
   const getProperty = useCallback((response: GetPagePropertyResponse): Property | null => {
@@ -161,13 +174,14 @@ export const useNotion = (auth: string, tagDatabaseId: string) => {
   }, [client.pages.properties, fetchDatabase, getIcon, getProperty, tagDatabaseId]);
 
   const getBookmark = useCallback(
-    (id: string, responses: GetPagePropertyResponse[], favicon: string | null): Bookmark => {
+    (id: string, responses: GetPagePropertyResponse[], favicon: string | null, cover: string | null): Bookmark => {
       const bookmark: Bookmark = {
         id,
         url: "",
         name: "",
         tag: [],
         favicon,
+        cover,
       };
 
       responses.forEach((response) => {
@@ -283,8 +297,9 @@ export const useNotion = (auth: string, tagDatabaseId: string) => {
       const bookmarks = await Promise.all(
         results.map(async (result) => {
           const favicon = getIcon(result.icon);
+          const cover = getCover(result.cover);
           const properties = await fetchProperties(result.id, propertyIds);
-          const bookmark = getBookmark(result.id, properties, favicon);
+          const bookmark = getBookmark(result.id, properties, favicon, cover);
 
           return bookmark;
         })
@@ -292,7 +307,7 @@ export const useNotion = (auth: string, tagDatabaseId: string) => {
 
       return bookmarks;
     },
-    [fetchDatabase, fetchProperties, getBookmark, getIcon]
+    [fetchDatabase, fetchProperties, getBookmark, getIcon, getCover]
   );
 
   return { fetchTags, fetchBookmarks, stockArticle };
