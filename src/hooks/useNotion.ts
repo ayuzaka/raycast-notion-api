@@ -292,13 +292,16 @@ export const useNotion = (auth: string, tagDatabaseId: string) => {
       if (!results[0]) {
         return [];
       }
-      const propertyIds = Object.entries(results[0].properties).map((property) => property[1].id);
+      const propertyIds = Object.entries(results[0].properties)
+        .filter((property) => property[1].type !== "rollup")
+        .map((property) => property[1].id);
 
       const bookmarks = await Promise.all(
         results.map(async (result) => {
           const favicon = getIcon(result.icon);
           const cover = getCover(result.cover);
           const properties = await fetchProperties(result.id, propertyIds);
+
           const bookmark = getBookmark(result.id, properties, favicon, cover);
 
           return bookmark;
