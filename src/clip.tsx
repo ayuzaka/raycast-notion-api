@@ -26,7 +26,7 @@ export default function Clip() {
   const tags = useFetchTags(fetchTags);
 
   const urlFieldRef = useRef<Form.TextField>(null);
-  const tagFIeldRef = useRef<Form.TagPicker>(null);
+  const tagFieldRef = useRef<Form.TagPicker>(null);
   const dateFieldRef = useRef<Form.DatePicker>(null);
 
   const { handleSubmit, itemProps } = useForm<FormValue>({
@@ -43,7 +43,7 @@ export default function Clip() {
           showToast({ title: "stocked article", style: Toast.Style.Success });
 
           urlFieldRef.current?.reset();
-          tagFIeldRef.current?.reset();
+          tagFieldRef.current?.reset();
           dateFieldRef.current?.reset();
         } else {
           showToast({ title: result.err.name, message: result.err.message, style: Toast.Style.Failure });
@@ -68,7 +68,7 @@ export default function Clip() {
       }
     >
       <Form.TextField title="URL" placeholder="Enter full url" ref={urlFieldRef} {...itemProps.url} />
-      <Form.TagPicker title="Tag" ref={tagFIeldRef} {...itemProps.tags}>
+      <Form.TagPicker title="Tag" ref={tagFieldRef} {...itemProps.tags}>
         {tags?.map((tag) => (
           <Form.TagPicker.Item key={tag.id} value={tag.id} title={tag.name} />
         ))}
