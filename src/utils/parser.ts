@@ -10,7 +10,12 @@ type ParsedDOM = {
 };
 
 const getTitle = (document: Document): string => {
-  return textContent(getElementsByTagName("title", document));
+  const title = getElementsByTagName("title", document)[0]
+  if (!title) {
+    return '';
+  }
+
+  return textContent(title);
 };
 
 const isOGP = (elem: Element): boolean => {
