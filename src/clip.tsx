@@ -67,13 +67,13 @@ export default function Clip() {
         </ActionPanel>
       }
     >
-      <Form.TextField title="URL" placeholder="Enter full url" ref={urlFieldRef} {...itemProps.url} />
-      <Form.TagPicker title="Tag" ref={tagFieldRef} {...itemProps.tags}>
+      <Form.TextField title="URL" placeholder="Enter full url" {...itemProps.url} ref={urlFieldRef} />
+      <Form.TagPicker title="Tag" {...itemProps.tags} ref={tagFieldRef}>
         {tags?.map((tag) => (
           <Form.TagPicker.Item key={tag.id} value={tag.id} title={tag.name} />
         ))}
       </Form.TagPicker>
-      <Form.DatePicker title="published" type={Form.DatePicker.Type.Date} ref={dateFieldRef} {...itemProps.published} />
+      <Form.DatePicker title="published" type={Form.DatePicker.Type.Date} {...itemProps.published} ref={dateFieldRef} />
     </Form>
   );
 }
