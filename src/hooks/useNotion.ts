@@ -218,7 +218,7 @@ export const useNotion = (auth: string, tagDatabaseId: string) => {
         properties: {
           Title: {
             type: "title",
-            title: [{ text: { content: title } }],
+            title: [{ text: { content: title.trim() } }],
           },
           URL: { type: "url", url },
         },
