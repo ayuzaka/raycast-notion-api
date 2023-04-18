@@ -10,9 +10,9 @@ type ParsedDOM = {
 };
 
 const getTitle = (document: Document): string => {
-  const title = getElementsByTagName("title", document)[0]
+  const title = getElementsByTagName("title", document)[0];
   if (!title) {
-    return '';
+    return "";
   }
 
   return textContent(title);
