@@ -2,7 +2,6 @@ import { useCallback } from "react";
 import { Client, APIResponseError } from "@notionhq/client";
 import type {
   CreatePageParameters,
-  GetPagePropertyResponse,
   PageObjectResponse,
   QueryDatabaseParameters,
 } from "@notionhq/client/build/src/api-endpoints";
@@ -33,33 +32,8 @@ type Article = {
   readonly published: Date | null;
 };
 
-type Property =
-  | {
-      readonly name: "title";
-      readonly value: string;
-    }
-  | {
-      readonly name: "url";
-      readonly value: string;
-    }
-  | {
-      readonly name: "tag";
-      readonly value: string[];
-    };
-
 export const useNotion = (auth: string, tagDatabaseId: string) => {
   const client = new Client({ auth });
-
-  const fetchProperties = useCallback(
-    async (pageId: string, propertyIds: string[]): Promise<GetPagePropertyResponse[]> => {
-      return await Promise.all(
-        propertyIds.map(
-          async (propertyId) => await client.pages.properties.retrieve({ page_id: pageId, property_id: propertyId })
-        )
-      );
-    },
-    [client.pages.properties]
-  );
 
   const getIcon = useCallback((icon: PageObjectResponse["icon"]): string | null => {
     if (!icon) {
@@ -89,31 +63,34 @@ export const useNotion = (auth: string, tagDatabaseId: string) => {
     return cover.file.url;
   }, []);
 
-  const getProperty = useCallback((response: GetPagePropertyResponse): Property | null => {
-    switch (response.type) {
-      case "property_item": {
-        const results = response.results;
-        if (results[0]?.type === "title") {
-          return { name: "title", value: results[0].title.plain_text };
-        }
+  const getName = (properties: PageObjectResponse["properties"]): string => {
+    const property = properties["Name"];
+    if (property?.type === "title") {
+      const name = property.title.map((t) => t.plain_text).join("");
 
-        if (results[0]?.type === "relation") {
-          const tagIds = results.map((result) => (result.type === "relation" ? result.relation.id : ""));
-
-          return { name: "tag", value: tagIds };
-        }
-
-        return null;
-      }
-
-      case "url": {
-        return { name: "url", value: response.url || "" };
-      }
-
-      default:
-        return null;
+      return name;
     }
-  }, []);
+
+    return "";
+  };
+
+  const getURL = (properties: PageObjectResponse["properties"]): string => {
+    const property = properties["URL"];
+    if (property?.type === "url" && property.url) {
+      return property.url;
+    }
+
+    return "";
+  };
+
+  const getTagIds = (properties: PageObjectResponse["properties"]): string[] => {
+    const property = properties["Tag"];
+    if (property?.type === "relation") {
+      return property.relation.map((r) => r.id);
+    }
+
+    return [];
+  };
 
   const fetchDatabase = useCallback(
     async (id: string): Promise<PageObjectResponse[]> => {
@@ -153,11 +130,21 @@ export const useNotion = (auth: string, tagDatabaseId: string) => {
           page_id: result.id,
           property_id: "title",
         });
-        const property = getProperty(namePropertyResponse);
-        if (property?.name === "title") {
+
+        if (namePropertyResponse.object === "list") {
+          const tagName = namePropertyResponse.results
+            .map((result) => {
+              if (result.type === "title") {
+                return result.title.plain_text;
+              }
+
+              return "";
+            })
+            .join("");
+
           return {
             id: result.id,
-            name: property.value,
+            name: tagName,
             icon,
           };
         }
@@ -171,43 +158,7 @@ export const useNotion = (auth: string, tagDatabaseId: string) => {
     );
 
     return tags;
-  }, [client.pages.properties, fetchDatabase, getIcon, getProperty, tagDatabaseId]);
-
-  const getBookmark = useCallback(
-    (id: string, responses: GetPagePropertyResponse[], favicon: string | null, cover: string | null): Bookmark => {
-      const bookmark: Bookmark = {
-        id,
-        url: "",
-        name: "",
-        tag: [],
-        favicon,
-        cover,
-      };
-
-      responses.forEach((response) => {
-        const property = getProperty(response);
-        switch (property?.name) {
-          case "title":
-            bookmark.name = property.value;
-            break;
-
-          case "url":
-            bookmark.url = property.value;
-            break;
-
-          case "tag":
-            bookmark.tag = property.value;
-            break;
-
-          default:
-            break;
-        }
-      });
-
-      return bookmark;
-    },
-    [getProperty]
-  );
+  }, [client.pages.properties, fetchDatabase, getIcon, tagDatabaseId]);
 
   const stockArticle = useCallback(
     async (databaseId: string, articleProps: Article): Promise<Result<string>> => {
@@ -292,17 +243,17 @@ export const useNotion = (auth: string, tagDatabaseId: string) => {
       if (!results[0]) {
         return [];
       }
-      const propertyIds = Object.entries(results[0].properties)
-        .filter((property) => property[1].type !== "rollup")
-        .map((property) => property[1].id);
 
       const bookmarks = await Promise.all(
         results.map(async (result) => {
           const favicon = getIcon(result.icon);
           const cover = getCover(result.cover);
-          const properties = await fetchProperties(result.id, propertyIds);
 
-          const bookmark = getBookmark(result.id, properties, favicon, cover);
+          const name = getName(result.properties);
+          const url = getURL(result.properties);
+          const tagIds = getTagIds(result.properties);
+
+          const bookmark = { id: result.id, name, url, tag: tagIds, favicon, cover };
 
           return bookmark;
         })
@@ -310,7 +261,7 @@ export const useNotion = (auth: string, tagDatabaseId: string) => {
 
       return bookmarks;
     },
-    [fetchDatabase, fetchProperties, getBookmark, getIcon, getCover]
+    [fetchDatabase, getIcon, getCover]
   );
 
   return { fetchTags, fetchBookmarks, stockArticle };
