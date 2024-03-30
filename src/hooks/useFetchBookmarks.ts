@@ -5,7 +5,7 @@ import type { Bookmark } from "./useNotion";
 const CACHE_KEY = "bookmarks";
 export const useFetchBookmarks = (
   fetchBookmarks: (databaseId: string) => Promise<readonly Bookmark[]>,
-  databaseId: string
+  databaseId: string,
 ) => {
   const cache = new Cache();
 

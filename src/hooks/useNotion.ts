@@ -114,7 +114,7 @@ export const useNotion = (auth: string, tagDatabaseId: string) => {
 
       return allResults;
     },
-    [client.databases]
+    [client.databases],
   );
 
   const fetchTags = useCallback(async (): Promise<readonly Tag[]> => {
@@ -154,7 +154,7 @@ export const useNotion = (auth: string, tagDatabaseId: string) => {
           name: "",
           icon,
         };
-      })
+      }),
     );
 
     return tags;
@@ -234,7 +234,7 @@ export const useNotion = (auth: string, tagDatabaseId: string) => {
         };
       }
     },
-    [client.pages]
+    [client.pages],
   );
 
   const fetchBookmarks = useCallback(
@@ -256,12 +256,12 @@ export const useNotion = (auth: string, tagDatabaseId: string) => {
           const bookmark = { id: result.id, name, url, tag: tagIds, favicon, cover };
 
           return bookmark;
-        })
+        }),
       );
 
       return bookmarks;
     },
-    [fetchDatabase, getIcon, getCover]
+    [fetchDatabase, getIcon, getCover],
   );
 
   return { fetchTags, fetchBookmarks, stockArticle };
